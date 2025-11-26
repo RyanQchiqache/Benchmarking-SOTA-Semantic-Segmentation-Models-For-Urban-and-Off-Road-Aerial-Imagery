@@ -229,26 +229,6 @@ class_names = [
     "Impervious surface",       # class 19
     "Tree",                     # class 20
 ]
-import csv, os
-
-"""def append_results_csv(csv_path, row_dict):
-    # Creates header if file doesn’t exist yet
-    new_file = not os.path.exists(csv_path)
-    with open(csv_path, "a", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=row_dict.keys())
-        if new_file:
-            writer.writeheader()
-        writer.writerow(row_dict)
-
-row = {
-    "dataset": "FLAIR",
-    "split": "test",
-    "model": cfg.model.name,                 # e.g. "Unet++"
-    "encoder":cfg.model.smp.encoder_name ,             # e.g. "resnet50"
-    "seed": cfg.train.seed,                       # mIoU_macro, OA_micro, OA_macro, BoundaryF1, mIoU_rare, Params_M, PeakVRAM_GB, Latency_ms_per_img
-}
-append_results_csv("results_runs.csv", row)
-"""
 # ================================
 # Reconstruction of images
 # ================================
@@ -289,42 +269,6 @@ def reconstruct_two_examples(model, test_dataset, color_map, num_reconstructions
                 count += 1
                 all_images, all_masks, all_preds = [], [], []
 
-"""# ================================
-# patchify and load data kaggel
-# ================================
-def extract_patches_from_directory(directory, kind='images'):
-    dataset = []
-    for path, subdirs, files in os.walk(directory):
-        if path.endswith(kind):
-            for file in sorted(os.listdir(path)):
-                if (kind == 'images' and file.endswith('.jpg')) or (kind == 'masks' and file.endswith('.png')):
-                    img_path = os.path.join(path, file)
-                    img = cv2.imread(img_path, 1)
-                    if kind == 'masks':
-                        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                    h, w = (img.shape[0] // PATCH_SIZE) * PATCH_SIZE, (img.shape[1] // PATCH_SIZE) * PATCH_SIZE
-                    img = Image.fromarray(img).crop((0, 0, w, h))
-                    img = np.array(img)
-                    patches = patchify(img, (PATCH_SIZE, PATCH_SIZE, 3), step=PATCH_SIZE)
-                    for i in range(patches.shape[0]):
-                        for j in range(patches.shape[1]):
-                            dataset.append(patches[i, j, 0])
-    return np.array(dataset)
-
-
-def load_data(root_dir, test_size, seed):
-    images = extract_patches_from_directory(root_dir, kind='images')
-    masks_rgb = extract_patches_from_directory(root_dir, kind='masks')
-    masks_label = utils.convert_masks_to_class_labels(masks_rgb)
-
-    visualisation.visualize_sample(images, masks_rgb, masks_label)
-
-    X_train, X_test, y_train, y_test = train_test_split(images, masks_label, train_size=1 - test_size,
-                                                        random_state=seed)
-    train_dataset = SatelliteDataset(X_train, y_train)
-    test_dataset = SatelliteDataset(X_test, y_test)
-
-    return train_dataset, test_dataset"""
 
 import os, json
 
