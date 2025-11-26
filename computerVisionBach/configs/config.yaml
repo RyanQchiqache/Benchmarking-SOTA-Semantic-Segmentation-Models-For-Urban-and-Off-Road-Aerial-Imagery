@@ -32,6 +32,11 @@ model:
       reinit_decoder: false
       freeze_backbone_stage0_1: false
 
+#########################################################################################
+# TRAINING
+#########################################################################################
+
+
 training:
   batch_size: 16
   num_epochs: 60
@@ -57,6 +62,10 @@ training:
     type: "Adam"
     weight_decay: 0.0
 
+
+#########################################################################################
+# DATA
+#########################################################################################
 data:
   # DLR Dataset
   dlr:
@@ -83,10 +92,10 @@ pretrained_processors:
   reduce_labels: false
   do_rescale: false
 
-augmentation:
-  horizontal_flip: true
-  vertical_flip: true
-  random_crop: false
+
+#########################################################################################
+# PATHS
+#########################################################################################
 
 paths:
   # All artifacts in one tidy tree; change these once, everything follows.
@@ -118,3 +127,60 @@ paths:
 
 misc:
   print_encoder_names: true
+
+#########################################################################################
+# AUGMENTATION
+#########################################################################################
+
+augmentation:
+  # Shared augmentations
+  normalize:
+    mean: [0.485, 0.456, 0.406]
+    std:  [0.229, 0.224, 0.225]
+
+  ade_normalize:
+    mean: [0.485, 0.456, 0.406]   # ADE20K means divided by 255
+    std:  [0.229, 0.224, 0.225]
+
+  common_train:
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rotate90: 0.5
+
+  common_val:
+    normalize: true
+
+  # For UNet / ResNet / DeepLabV3+
+  smp:
+    train:
+      horizontal_flip: 0.5
+      vertical_flip: 0.5
+      rotate90: 0.5
+      use_normalize: true
+
+    val:
+      use_normalize: true
+
+  # For Mask2Former
+  mask2former:
+    train:
+      horizontal_flip: 0.5
+      rotate90: 0.5
+      vertical_flip: 0.5
+      use_normalize: false
+
+    val:
+      use_normalize: false
+      use_ade_normalize: false
+
+  # For SegFormer / UPerNet
+  segformer:
+    train:
+      horizontal_flip: 0.5
+      vertical_flip: 0.5
+      rotate90: 0.5
+      use_normalize: false
+
+    val:
+      use_normalize: false
+      use_ade_normalize: false
