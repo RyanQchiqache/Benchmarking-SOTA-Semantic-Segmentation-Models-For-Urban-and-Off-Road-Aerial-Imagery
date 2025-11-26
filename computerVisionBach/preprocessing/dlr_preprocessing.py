@@ -14,37 +14,36 @@ cfg = load_config("config.yaml")
 
 processor = SegformerImageProcessor.from_pretrained("nvidia/segformer-b2-finetuned-ade-512-512")
 patch_size, overlap = 512, 0.5
-transforms = A.Compose([
-    A.HorizontalFlip(p=0.5),
-    A.RandomRotate90(p=0.5),
-    A.VerticalFlip(p=0.5),
-    A.Normalize(mean=[0.485, 0.456, 0.406],
-                std=[0.229, 0.224, 0.225]),
-    ToTensorV2()
-])
-val_tf = A.Compose([
-    A.Normalize(mean=[0.485,0.456,0.406], std=[0.229,0.224,0.225]),
-    ToTensorV2()
-])
-FLAIR_USED_LABELS = [1, 2, 3, 6, 7, 8, 10, 11, 13, 18]
-ADE_MEAN = (np.array([123.675, 116.280, 103.530]) / 255).tolist()
-ADE_STD = (np.array([58.395, 57.120, 57.375]) / 255).tolist()
+from utils.augmentation import build_aug_from_cfg
 
-m2f_train_tf = A.Compose([
-    A.HorizontalFlip(p=0.5),
-    A.RandomRotate90(p=0.5),
-    A.VerticalFlip(p=0.5),
-])
-m2f_val_tf = A.Compose([
-    A.Normalize(mean=ADE_MEAN, std=ADE_STD),
-    ToTensorV2()
-])
+aug = cfg.augmentation
 
-sg_train_tf = A.Compose([
-    A.HorizontalFlip(p=0.5),
-    A.VerticalFlip(p=0.5),
-    A.RandomRotate90(p=0.5),
-])
+# Model name → appropriate augmentation set
+model_name = cfg.model.name.lower()
+
+if model_name == "mask2former":
+    train_tf = build_aug_from_cfg(
+        aug.mask2former.train, aug.normalize, aug.ade_normalize
+    )
+    val_tf = build_aug_from_cfg(
+        aug.mask2former.val, aug.normalize, aug.ade_normalize
+    )
+
+elif model_name in ["segformer", "upernet"]:
+    train_tf = build_aug_from_cfg(
+        aug.segformer.train, aug.normalize, aug.ade_normalize
+    )
+    val_tf = build_aug_from_cfg(
+        aug.segformer.val, aug.normalize, aug.ade_normalize
+    )
+
+else:  # UNet, DeepLab, ResNet-SMP models
+    train_tf = build_aug_from_cfg(
+        aug.smp.train, aug.normalize, aug.ade_normalize
+    )
+    val_tf = build_aug_from_cfg(
+        aug.smp.val, aug.normalize, aug.ade_normalize
+    )
 sg_val_tf =None
 
 # =====================================
@@ -145,14 +144,14 @@ def load_data_dlr(base_dir, dataset_type="SS_Dense", model_name="Mask2former"):
         return relabeled
 
     if model_name.lower() == "mask2former":
-        train_dataset = SatelliteDataset(X_train, y_train, transform=m2f_train_tf, relabel_fn=relabel_fn, is_hf_model=True)
+        train_dataset = SatelliteDataset(X_train, y_train, transform=train_tf, relabel_fn=relabel_fn, is_hf_model=True)
         val_dataset = SatelliteDataset(X_val, y_val, relabel_fn=relabel_fn, is_hf_model=True)
         test_dataset = SatelliteDataset(X_test, masks=None, is_hf_model=True)
 
 
     elif model_name.lower() in ["segformer", "upernet"]:
         train_dataset = SatelliteDataset(
-            X_train, y_train, transform=sg_train_tf, relabel_fn=relabel_fn, is_hf_model=True
+            X_train, y_train, transform=sg_val_tf, relabel_fn=relabel_fn, is_hf_model=True
         )
         val_dataset = SatelliteDataset(
             X_val, y_val, transform=sg_val_tf, relabel_fn=relabel_fn, is_hf_model=True
@@ -161,7 +160,7 @@ def load_data_dlr(base_dir, dataset_type="SS_Dense", model_name="Mask2former"):
 
 
     else:
-        train_dataset = SatelliteDataset(X_train, y_train, transform=transforms, relabel_fn=relabel_fn_ignore, use_processor=cfg.data.dlr.use_processor, is_hf_model=cfg.data.dlr.is_hf_model)
+        train_dataset = SatelliteDataset(X_train, y_train, transform=train_tf, relabel_fn=relabel_fn_ignore, use_processor=cfg.data.dlr.use_processor, is_hf_model=cfg.data.dlr.is_hf_model)
         val_dataset = SatelliteDataset(X_val, y_val, transform=val_tf, relabel_fn=relabel_fn_ignore, is_hf_model=cfg.data.dlr.is_hf_model)
         test_dataset = SatelliteDataset(X_test, masks=None, transform=val_tf, is_test=True, is_hf_model=cfg.data.dlr.is_hf_model)
 
