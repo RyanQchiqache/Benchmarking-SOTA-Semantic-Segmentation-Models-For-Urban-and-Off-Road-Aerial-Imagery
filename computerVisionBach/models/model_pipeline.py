@@ -1,13 +1,19 @@
 import copy
 import os
 import sys
+os.environ["HF_HUB_OFFLINE"] = "1"
+os.environ["NO_ALBUMENTATIONS_UPDATE"] = "1"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from tqdm import tqdm
 from loguru import logger
-from omegaconf import OmegaConf
+from transformers.utils.logging import set_verbosity_error
+set_verbosity_error()
+from torch.amp import GradScaler
+scaler = GradScaler(device="cuda")
+
 
 import torch
 import torch.nn as nn
@@ -38,8 +44,6 @@ print(f"Encoders available in smp: {smp.encoders.get_encoder_names()}")
 cfg = load_config("config.yaml")
 
 
-
-scaler = GradScaler()
 
 def get_loss_and_optimizer(model):
     dice_loss = DiceLoss(mode='multiclass')
