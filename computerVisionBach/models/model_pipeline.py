@@ -29,11 +29,11 @@ print("Transformers version:", transformers.__version__)
 from transformers import Mask2FormerForUniversalSegmentation, SegformerForSemanticSegmentation, UperNetForSemanticSegmentation
 
 
-from computerVisionBach.models.Unet_SS import visualisation, utils
-from computerVisionBach.models.Unet_SS.preprocessing.flair_preprocessing import prepare_datasets_from_csvs
-from computerVisionBach.models.Unet_SS.preprocessing import dlr_preprocessing
-from computerVisionBach.models.evaluation import evaluate
-from computerVisionBach.models.models_factory import build_model
+from models.Unet_SS import visualisation, utils
+from models.Unet_SS.preprocessing.flair_preprocessing import prepare_datasets_from_csvs
+from models.Unet_SS.preprocessing import dlr_preprocessing
+from models.evaluation import evaluate
+from models.models_factory import build_model
 print(f"Encoders available in smp: {smp.encoders.get_encoder_names()}")
 
 cfg = OmegaConf.load("/home/ryqc/data/Machine-Deep-Learning-Center/computerVisionBach/models/Unet_SS/config/config.yaml")

@@ -12,7 +12,7 @@ from transformers import Mask2FormerForUniversalSegmentation, Mask2FormerImagePr
 from transformers.models.mask2former.modeling_mask2former import (
     Mask2FormerPixelDecoder,
 )
-from computerVisionBach.models.Unet_SS.SS_models.Unet import UNet
+from models.Unet_SS.SS_models.Unet import UNet
 from transformers import AutoImageProcessor
 from torch import nn
 from loguru import logger

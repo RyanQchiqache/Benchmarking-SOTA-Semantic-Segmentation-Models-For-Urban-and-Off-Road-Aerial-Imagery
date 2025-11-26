@@ -1,8 +1,8 @@
 import os
 import glob
 import numpy as np
-from computerVisionBach.models.Unet_SS.satellite_dataset.satellite_data import SatelliteDataset
-from computerVisionBach.models.Unet_SS import utils
+from models.Unet_SS.satellite_dataset.satellite_data import SatelliteDataset
+from models.Unet_SS import utils
 
 class FlairDataset(SatelliteDataset):
     COLOR_MAP = {

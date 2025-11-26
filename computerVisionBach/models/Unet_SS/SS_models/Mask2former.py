@@ -47,7 +47,7 @@ class Mask2FormerModel:
 
         # Freeze embedding + Swin stages 0 and 1
         """self.freeze()
-        logger.info("✅ Frozen patch embedding and Swin stages 0 and 1.")
+        logger.info("Frozen patch embedding and Swin stages 0 and 1.")
 
         # Reinitialize decoder
         self.reinit_decoder_official(self.model)

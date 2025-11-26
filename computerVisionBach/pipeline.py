@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
-from computerVisionBach.models.Unet_SS import utils
+from models.Unet_SS import utils
 
 # Constants
 PATCH_SIZE = 256

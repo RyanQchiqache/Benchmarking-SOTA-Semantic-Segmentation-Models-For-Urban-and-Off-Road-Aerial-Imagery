@@ -1,9 +1,6 @@
 # ==============================
 # vis_app.py  — Streamlit UI
-# Uses: computerVisionBach/vis_core/uni_infer.py
 # ==============================
-
-# --- put this at the VERY TOP ---
 import sys
 from pathlib import Path
 
@@ -35,11 +32,11 @@ import streamlit as st
 from patchify import patchify, unpatchify
 
 # ---- project imports ----
-from computerVisionBach.models.Unet_SS import utils
-from computerVisionBach.models.Unet_SS.satellite_dataset.flair_dataset import FlairDataset
+from models.Unet_SS import utils
+from models.Unet_SS.satellite_dataset.flair_dataset import FlairDataset
 
 # unified inference (your new file)
-from computerVisionBach.models.visualisation_app.uni_infer import (
+from models.visualisation_app.uni_infer import (
     load_model, ModelBundle, predict_patch
 )
 

@@ -10,8 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from omegaconf import OmegaConf
 from typing import Tuple, List, Optional
 from albumentations.pytorch import ToTensorV2
-from transformers import SegformerImageProcessor
-from computerVisionBach.models.Unet_SS.satellite_dataset.flair_dataset import FlairDataset
+from models.Unet_SS.satellite_dataset.flair_dataset import FlairDataset
 
 cfg = OmegaConf.load("/home/ryqc/data/Machine-Deep-Learning-Center/computerVisionBach/models/Unet_SS/config/config.yaml")
 OmegaConf.resolve(cfg)

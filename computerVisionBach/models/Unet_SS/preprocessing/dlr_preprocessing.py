@@ -8,8 +8,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from omegaconf import OmegaConf
 from albumentations.pytorch import ToTensorV2
 from transformers import SegformerImageProcessor
-from computerVisionBach.models.Unet_SS import utils
-from computerVisionBach.models.Unet_SS.satellite_dataset.satellite_data import SatelliteDataset
+from models.Unet_SS import utils
+from models.Unet_SS.satellite_dataset.satellite_data import SatelliteDataset
+
 
 cfg = OmegaConf.load("/home/ryqc/data/Machine-Deep-Learning-Center/computerVisionBach/models/Unet_SS/config/config.yaml")
 OmegaConf.resolve(cfg)
