@@ -5,20 +5,19 @@ import segmentation_models_pytorch as smp
 
 
 from functools import partial
-from omegaconf import OmegaConf
 from transformers import SegformerForSemanticSegmentation
-from transformers import UperNetForSemanticSegmentation, SegformerImageProcessor
-from transformers import Mask2FormerForUniversalSegmentation, Mask2FormerImageProcessor
+from transformers import UperNetForSemanticSegmentation
+from transformers import Mask2FormerForUniversalSegmentation
 from transformers.models.mask2former.modeling_mask2former import (
     Mask2FormerPixelDecoder,
 )
-from models.Unet_SS.SS_models.Unet import UNet
+from models.model_helpers.Unet import UNet
 from transformers import AutoImageProcessor
 from torch import nn
 from loguru import logger
 
-cfg = OmegaConf.load("/home/ryqc/data/Machine-Deep-Learning-Center/computerVisionBach/models/Unet_SS/config/config.yaml")
-OmegaConf.resolve(cfg)
+from utils.config_loader import load_config
+cfg = load_config("config.yaml")
 
 # ---- optional: central defaults
 DEFAULTS = {

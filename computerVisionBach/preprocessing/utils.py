@@ -2,16 +2,12 @@ import re
 import torch
 import numpy as np
 
-from pathlib import Path
 from loguru import logger
 from datetime import datetime
 from collections import Counter
-from omegaconf import OmegaConf
 from torch.utils.data import DataLoader
-from transformers import Mask2FormerForUniversalSegmentation, SegformerForSemanticSegmentation, UperNetForSemanticSegmentation
-
-config_file = Path(__file__).resolve().parent / "config" / "config.yaml"
-cfg = OmegaConf.load("/home/ryqc/data/Machine-Deep-Learning-Center/computerVisionBach/models/Unet_SS/config/config.yaml")
+from utils.config_loader import load_config
+cfg = load_config("config.yaml")
 
 def _safe_slug(s: str) -> str:
     """Make a string filesystem-safe and concise."""
@@ -334,7 +330,7 @@ import os, json
 
 def is_hf_semseg_model(model: torch.nn.Module) -> bool:
     """True for HF semseg models (SegFormer / UPerNet / Mask2Former)."""
-    mtype = getattr(getattr(model, "config", None), "model_type", "")
+    mtype = getattr(getattr(model, "configs", None), "model_type", "")
     return str(mtype).lower() in {"segformer", "upernet", "mask2former"}
 
 
@@ -368,9 +364,9 @@ def save_checkpoint(model, processor, cfg, best_miou: float) -> str:
                 pass
 
         meta = {
-            "model_type": str(getattr(getattr(model, "config", None), "model_type", "")),
-            "num_labels": int(getattr(getattr(model, "config", None), "num_labels", 0) or 0),
-            "ignore_index": int(getattr(getattr(model, "config", None), "ignore_index", 255) or 255),
+            "model_type": str(getattr(getattr(model, "configs", None), "model_type", "")),
+            "num_labels": int(getattr(getattr(model, "configs", None), "num_labels", 0) or 0),
+            "ignore_index": int(getattr(getattr(model, "configs", None), "ignore_index", 255) or 255),
             "best_miou": float(best_miou),
         }
         with open(os.path.join(out_dir, "training_meta.json"), "w") as f:

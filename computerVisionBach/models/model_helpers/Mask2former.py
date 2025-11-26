@@ -195,7 +195,7 @@ class Mask2FormerModel:
     def evaluate(self, data_loader, device, epoch, writer=None):
         logger.info("Evaluating model...")
         self.model.eval()
-        num_classes = self.model.config.num_labels if hasattr(self.model, "config") else 6
+        num_classes = self.model.config.num_labels if hasattr(self.model, "configs") else 6
 
         # Instantiate metric
         iou_macro = MulticlassJaccardIndex(num_classes=num_classes, average="macro", ignore_index=255).to(device)

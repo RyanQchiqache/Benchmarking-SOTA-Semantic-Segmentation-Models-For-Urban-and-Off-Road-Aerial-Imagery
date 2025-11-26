@@ -32,16 +32,15 @@ import streamlit as st
 from patchify import patchify, unpatchify
 
 # ---- project imports ----
-from models.Unet_SS import utils
-from models.Unet_SS.satellite_dataset.flair_dataset import FlairDataset
+from preprocessing import utils
+from datasets.flair_dataset import FlairDataset
 
 # unified inference (your new file)
-from models.visualisation_app.uni_infer import (
-    load_model, ModelBundle, predict_patch
+from visualisation_app.universal_infer import (
+    load_model, predict_patch
 )
-
-cfg = OmegaConf.load("/home/ryqc/data/Machine-Deep-Learning-Center/computerVisionBach/models/Unet_SS/config/config.yaml")
-OmegaConf.resolve(cfg)
+from utils.config_loader import load_config
+cfg = load_config("config.yaml")
 
 # =============================
 # App Config & Globals

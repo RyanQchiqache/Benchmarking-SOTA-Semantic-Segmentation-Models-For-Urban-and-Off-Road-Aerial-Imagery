@@ -5,15 +5,12 @@ import numpy as np
 import albumentations as A
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
-from omegaconf import OmegaConf
 from albumentations.pytorch import ToTensorV2
 from transformers import SegformerImageProcessor
-from models.Unet_SS import utils
-from models.Unet_SS.satellite_dataset.satellite_data import SatelliteDataset
-
-
-cfg = OmegaConf.load("/home/ryqc/data/Machine-Deep-Learning-Center/computerVisionBach/models/Unet_SS/config/config.yaml")
-OmegaConf.resolve(cfg)
+from preprocessing import utils
+from datasets.satellite_data import SatelliteDataset
+from utils.config_loader import load_config
+cfg = load_config("config.yaml")
 
 processor = SegformerImageProcessor.from_pretrained("nvidia/segformer-b2-finetuned-ade-512-512")
 patch_size, overlap = 512, 0.5

@@ -2,15 +2,14 @@ import os
 import torch
 import numpy as np
 
-from models.Unet_SS import utils
-from models.Unet_SS.utils import COLOR_MAP_dense
+from preprocessing import utils
+from preprocessing.utils import COLOR_MAP_dense
 from matplotlib import pyplot as plt
 from patchify import unpatchify
 from transformers.modeling_utils import PreTrainedModel
-from omegaconf import OmegaConf
 
-cfg = OmegaConf.load("/home/ryqc/data/Machine-Deep-Learning-Center/computerVisionBach/models/Unet_SS/config/config.yaml")
-
+from utils.config_loader import load_config
+cfg = load_config("config.yaml")
 
 def visualize_val_predictions(model, val_loader, device, epoch, processor=None, writer=None, num_samples=3):
     model.eval()

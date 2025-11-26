@@ -28,16 +28,15 @@ import transformers
 print("Transformers version:", transformers.__version__)
 from transformers import Mask2FormerForUniversalSegmentation, SegformerForSemanticSegmentation, UperNetForSemanticSegmentation
 
-
-from models.Unet_SS import visualisation, utils
-from models.Unet_SS.preprocessing.flair_preprocessing import prepare_datasets_from_csvs
-from models.Unet_SS.preprocessing import dlr_preprocessing
+from visualisation_app import visualisation
+from preprocessing.flair_preprocessing import prepare_datasets_from_csvs
+from preprocessing import utils, dlr_preprocessing
 from models.evaluation import evaluate
 from models.models_factory import build_model
+from utils.config_loader import load_config
 print(f"Encoders available in smp: {smp.encoders.get_encoder_names()}")
+cfg = load_config("config.yaml")
 
-cfg = OmegaConf.load("/home/ryqc/data/Machine-Deep-Learning-Center/computerVisionBach/models/Unet_SS/config/config.yaml")
-OmegaConf.resolve(cfg)
 
 
 scaler = GradScaler()
@@ -96,7 +95,7 @@ def get_loss_and_optimizer(model):
 def train_one_epoch(model, dataloader, criterion, optimizer, device, processor=None):
     model.train()
     running_loss = 0.0
-    model_type = getattr(getattr(model, "config", None), "model_type", "").lower()
+    model_type = getattr(getattr(model, "configs", None), "model_type", "").lower()
     is_mask2former = isinstance(model, Mask2FormerForUniversalSegmentation) or model_type == "mask2former"
     is_hf_semseg = isinstance(model, (SegformerForSemanticSegmentation, UperNetForSemanticSegmentation)) \
                    or model_type in {"segformer", "upernet"}

@@ -7,13 +7,12 @@ import albumentations as A
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
-from omegaconf import OmegaConf
+
 from typing import Tuple, List, Optional
 from albumentations.pytorch import ToTensorV2
-from models.Unet_SS.satellite_dataset.flair_dataset import FlairDataset
-
-cfg = OmegaConf.load("/home/ryqc/data/Machine-Deep-Learning-Center/computerVisionBach/models/Unet_SS/config/config.yaml")
-OmegaConf.resolve(cfg)
+from datasets.flair_dataset import FlairDataset
+from utils.config_loader import load_config
+cfg = load_config("config.yaml")
 
 smp_trans = A.Compose([
 A.HorizontalFlip(p=0.5),
