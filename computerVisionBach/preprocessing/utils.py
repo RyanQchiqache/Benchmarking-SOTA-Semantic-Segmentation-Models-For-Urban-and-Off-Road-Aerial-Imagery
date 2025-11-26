@@ -206,29 +206,6 @@ COLOR_MAP_multi_lane = {
     12: ['Other lane-markings', '#6400c8'],
     }
 
-
-class_names = [
-    "Low vegetation",           # class 1
-    "Paved road",               # class 2
-    "Non paved road",           # class 3
-    "Paved parking place",      # class 4
-    "Non paved parking place",  # class 5
-    "Bikeways",                 # class 6
-    "Sidewalks",                # class 7
-    "Entrance exit",            # class 8
-    "Danger area",              # class 9
-    "Lane-markings",            # class 10
-    "Building",                 # class 11
-    "Car",                      # class 12
-    "Trailer",                  # class 13
-    "Van",                      # class 14
-    "Truck",                    # class 15
-    "Long truck",               # class 16
-    "Bus",                      # class 17
-    "Clutter",                  # class 18
-    "Impervious surface",       # class 19
-    "Tree",                     # class 20
-]
 # ================================
 # Reconstruction of images
 # ================================
