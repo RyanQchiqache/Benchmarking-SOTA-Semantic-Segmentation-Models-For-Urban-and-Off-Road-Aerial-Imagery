@@ -1,0 +1,185 @@
+project:
+  name: "computerVisionBach-segmentation"
+  dataset: "flair"     # one of: ["flair", "dlr"]
+  description: "Config for segmentation training"
+  version: 1.0
+
+model:
+  name: "Unet"             # e.g., "unet_resnet101", "DeepLabV3+", "SegFormer", "Mask2Former", "UPerNet", "FPN", "UnetPP", "UNet"
+  num_classes: 12
+  ignore_class_index: 255
+  patch_size: 512
+  overlap: 0.5
+  patchify_enabled: true
+
+  smp:
+    encoder_name: "resnet50"
+    encoder_weights: "imagenet"
+    in_channels: 3
+    encoder_output_stride: 16
+
+  hf:
+    checkpoint:
+      segformer:   "nvidia/segformer-b2-finetuned-ade-512-512" # or "nvidia/segformer-b5-finetuned-ade-640-640"
+      mask2former: "facebook/mask2former-swin-large-ade-semantic"
+      upernet:     "openmmlab/upernet-swin-small"
+    processor:
+      reduce_labels: false
+      do_rescale: true
+      do_normalize: false
+      do_resize: false
+    options:
+      reinit_decoder: false
+      freeze_backbone_stage0_1: false
+
+#########################################################################################
+# TRAINING
+#########################################################################################
+
+
+training:
+  batch_size: 14
+  num_epochs: 60
+  learning_rate: 1e-4 # Unet/resnet and deeplabv3+ [3e-4 - 1e-3], Mask2former/Upernet [6e-5 – 1e-4]
+  random_seed: 42
+  patience: 12           # early stopping on mIoU
+  weight_decay: 0.0004
+  betas: [0.9, 0.999]
+  num_reconstructions: 4
+  num_workers: 0
+  pin_memory: true
+  scheduler:
+    type: "cosine"       #"ReduceLROnPlateau"
+    mode: "max"
+    patience: 5
+    factor: 0.5
+    verbose: true
+    warmup_epochs: 4   # linear warmup duration (epochs) Unet/resnet and deeplabv3+ [1-2], Mask2former/Upernet [4]
+    max_epochs: 60        # total epochs (same as training.epochs)
+    eta_min: 0.0          # final LR at the end of cosine
+    warmup_start_factor: 0.1  # start at 10% of base LR (optional)
+  optimizer:
+    type: "Adam"
+    weight_decay: 0.0
+
+########################################################################################
+# DATA
+#########################################################################################
+data:
+  # DLR Dataset
+  dlr:
+    root_dir: "/home/ryqc/projects/datasets/SkyScapes/ZIP"
+    rare_class_ids: []
+    use_processor: false
+    is_hf_model: false
+
+
+  # FLAIR Dataset
+  flair:
+    base_dir: "/home/ryqc/projects/datasets/FLAIR"
+    train_csv: "/home/ryqc/projects/datasets/FLAIR/cleaned-train01.csv"
+    val_csv:   "/home/ryqc/projects/datasets/FLAIR/cleaned-test01.csv"
+    test_csv:  "/home/ryqc/projects/datasets/FLAIR/cleaned-test01.csv"
+    used_labels: ...
+    rare_class_ids: ...
+    use_processor: false
+    is_hf_model: false
+
+pretrained_processors:
+  segformer: "nvidia/segformer-b2-finetuned-ade-512-512"
+  mask2former: "facebook/mask2former-swin-small-ade-semantic"
+  reduce_labels: false
+  do_rescale: false
+
+
+#########################################################################################
+# PATHS
+#########################################################################################
+
+paths:
+  # All artifacts in one tidy tree; change these once, everything follows.
+  artifacts_root: "/home/ryqc/projects/python_projects/experiments_training"   # master root for all outputs below
+  download: "${oc.env:HOME}/projects/downloads"
+
+  # TensorBoard logs
+  tensorboard:
+    dir: "${paths.artifacts_root}/runs"                    # base runs dir
+    experiment_prefix: "${project.dataset}_experiment_${model.name}"   # final folder can append timestamp in code
+    add_timestamp: true                                    # your script can append datetime if true
+
+  # Checkpoints
+  checkpoints:
+    dir: "${paths.artifacts_root}/checkpoints"
+    # Filename pattern tokens you can format in code:
+    # {model}, {dataset}, {epoch}, {miou}, {timestamp}
+    filename_pattern: "{model}_{dataset}_{timestamp}.pth"
+    save_best_only: true                                   # save the best (by mIoU)
+    metric: "mIoU_macro"                                   # which val metric defines "best"
+
+  # Visualizations / samples
+  visualizations:
+    dir: "${paths.artifacts_root}/viz"
+
+  # Logs (text)
+  logs:
+    dir: "${paths.artifacts_root}/logs"
+
+misc:
+  print_encoder_names: true
+
+#########################################################################################
+# AUGMENTATION
+#########################################################################################
+
+augmentation:
+  # Shared augmentations
+  normalize:
+    mean: [0.485, 0.456, 0.406]
+    std:  [0.229, 0.224, 0.225]
+
+  ade_normalize:
+    mean: [0.485, 0.456, 0.406]   # ADE20K means divided by 255
+    std:  [0.229, 0.224, 0.225]
+
+  common_train:
+    horizontal_flip: 0.5
+    vertical_flip: 0.5
+    rotate90: 0.5
+
+  common_val:
+    normalize: true
+
+  # For UNet / ResNet / DeepLabV3+
+  smp:
+    train:
+      horizontal_flip: 0.5
+      vertical_flip: 0.5
+      rotate90: 0.5
+      use_normalize: true
+
+    val:
+      use_normalize: true
+
+  # For Mask2Former
+  mask2former:
+    train:
+      horizontal_flip: 0.5
+      rotate90: 0.5
+      vertical_flip: 0.5
+      use_normalize: false
+
+    val:
+      use_normalize: false
+      use_ade_normalize: false
+
+  # For SegFormer / UPerNet
+  segformer:
+    train:
+      horizontal_flip: 0.5
+      vertical_flip: 0.5
+      rotate90: 0.5
+      use_normalize: false
+
+    val:
+      use_normalize: false
+      use_ade_normalize: false
