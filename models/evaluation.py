@@ -1,6 +1,6 @@
 import time
 from tqdm import tqdm
-from typing import Dict, Iterable, Optional, Sequence
+from typing import Dict, Optional, Sequence
 from loguru import logger
 import torch
 import torch.nn.functional as F
@@ -162,7 +162,7 @@ def evaluate(
         return (y.squeeze(0).squeeze(0) > 0.5)
 
     @torch.no_grad()
-    def _boundary_f1_batch(pred: torch.Tensor, target: torch.Tensor) -> torch.Tuple[int, int, int]:
+    def _boundary_f1_batch(pred: torch.Tensor, target: torch.Tensor) -> tuple[int, int, int]:
         """
         pred, target: [H, W] integer labels with ignore_index.
         Computes TP/FP/FN for boundary detection with tolerance.
