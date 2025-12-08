@@ -1,12 +1,12 @@
 project:
   name: "computerVisionBach-segmentation"
-  dataset: "flair"     # one of: ["flair", "dlr"]
+  dataset: "DLR"     # one of: ["flair", "dlr"]
   description: "Config for segmentation training"
   version: 1.0
 
 model:
   name: "Unet"             # e.g., "unet_resnet101", "DeepLabV3+", "SegFormer", "Mask2Former", "UPerNet", "FPN", "UnetPP", "UNet"
-  num_classes: 12
+  num_classes: 20
   ignore_class_index: 255
   patch_size: 512
   overlap: 0.5
@@ -38,7 +38,7 @@ model:
 
 
 training:
-  batch_size: 14
+  batch_size: 26
   num_epochs: 60
   learning_rate: 1e-4 # Unet/resnet and deeplabv3+ [3e-4 - 1e-3], Mask2former/Upernet [6e-5 – 1e-4]
   random_seed: 42
@@ -183,3 +183,23 @@ augmentation:
     val:
       use_normalize: false
       use_ade_normalize: false
+
+
+#############################################################################
+# Checkpoints
+############################################################################
+checkpoints:
+  DLR:
+    unet: "/home/ryqc/projects/segmentation_experiments/experiments_bachelor/segmentation/checkpoints/dlr/unet_resnet101/enc-resnet101_w-imagenet/unet_resnet101_dlr_2025-11-18_13-17-27.pth"
+    deeplabv3+: "/home/ryqc/projects/segmentation_experiments/experiments_bachelor/segmentation/checkpoints/dlr/DeepLabV3+/enc-resnet101_w-imagenet/DeepLabV3+_dlr_2025-11-18_13-38-31.pth"
+    upernet: "/home/ryqc/projects/segmentation_experiments/experiments_bachelor/segmentation/checkpoints/dlr/UPerNet/enc-upernetlarge_w-ade/UPerNet_dlr_2025-11-18_17-51-33_hf"
+    unet_resnet: "/home/ryqc/projects/segmentation_experiments/experiments_bachelor/segmentation/checkpoints/dlr/Unet/enc-resnet101_w-imagenet/Unet_dlr_2025-11-24_18-52-55.pth"
+    mask2former: "/home/ryqc/projects/segmentation_experiments/experiments_bachelor/segmentation/checkpoints/dlr/Mask2Former/enc-m2mlarge_w-ade/Mask2Former_dlr_2025-11-18_17-46-02_hf"
+
+  FLAIR:
+    unet: ""
+    deeplabv3+: "/home/ryqc/data/Machine-Deep-Learning-Center/computerVisionBach/models/Unet_SS/checkpoints/deeplabv3+_model_flair_deeplabv3+.pth"
+    upernet: ""
+    unet_resnet: "/home/ryqc/Downloads/unet_resnet34_model_flair_unet_resnet34"
+    mask2former: "/home/ryqc/projects/segmentation_experiments/experiments_bachelor/segmentation/checkpoints/flair/Mask2Former/enc-last_trial_w-ade20k/Mask2Former_flair_2025-11-22_18-48-24_hf"
+
