@@ -37,7 +37,7 @@ computerVisionBach/
 ├── models/
 │   └── model_pipleline.py
 ├── preprocessing/
-├── utils/
+├── utilities/
 ├── visualisation_app/
 └── requirements.txt
 ```
