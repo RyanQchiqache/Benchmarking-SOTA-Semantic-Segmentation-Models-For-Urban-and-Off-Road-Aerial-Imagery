@@ -11,8 +11,6 @@ from tqdm import tqdm
 from loguru import logger
 from transformers.utils.logging import set_verbosity_error
 set_verbosity_error()
-from torch.amp import GradScaler
-scaler = GradScaler(device="cuda")
 
 
 import torch
@@ -43,7 +41,6 @@ from utilities import utils
 from utilities.config_loader import load_config
 print(f"Encoders available in smp: {smp.encoders.get_encoder_names()}")
 cfg = load_config("config.yaml")
-
 
 
 def get_loss_and_optimizer(model):
@@ -104,6 +101,8 @@ def train_one_epoch(model, dataloader, criterion, optimizer, device, processor=N
     is_mask2former = isinstance(model, Mask2FormerForUniversalSegmentation) or model_type == "mask2former"
     is_hf_semseg = isinstance(model, (SegformerForSemanticSegmentation, UperNetForSemanticSegmentation)) \
                    or model_type in {"segformer", "upernet"}
+    scaler = GradScaler()
+
 
     for images, masks in tqdm(dataloader, desc="Training", leave=False):
         images, masks = images.to(device), masks.to(device)
