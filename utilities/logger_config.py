@@ -26,8 +26,8 @@ def setup_logger(name: str, level: int = logging.DEBUG) -> logging.Logger:
     return logger
 
 def setup_logger(name: str, level: str = "DEBUG") -> logger:
-    # Set the log level for the logger (default is DEBUG)
-    logger.remove()  # Remove the default handler (if any)
+
+    logger.remove()  
     logger.add(
         sys.stdout,
         format="<bold>{time:YYYY-MM-DD HH:mm:ss}</bold> | <level>{level}</level> | <cyan>{message}</cyan>",
