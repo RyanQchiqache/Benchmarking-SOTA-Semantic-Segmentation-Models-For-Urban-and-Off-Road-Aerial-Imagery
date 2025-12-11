@@ -45,7 +45,7 @@ cfg = load_config("config.yaml")
 # =============================
 # App Config & Globals
 # =============================
-st.set_page_config(page_title="🛰️ Semantic Segmentation", layout="wide")
+st.set_page_config(page_title="Semantic Segmentation", layout="wide")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Dataset options
@@ -257,7 +257,7 @@ with st.sidebar:
     if st.button("♻️ Reload Model Only"):
         soft_reset_model()
 
-    st.title("BEV Segmentation AI")
+    st.title("Aerial Semantic Segmentation")
     dataset = st.selectbox("Dataset", DATASETS, index=0,
                            help="Pick the dataset the image belongs to (affects preprocessing & colors).")
     model_choice = st.selectbox("Model", MODELS, index=0)
