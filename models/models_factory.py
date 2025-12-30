@@ -94,33 +94,45 @@ def _ensure_label_maps(num_classes, class_names=None):
     label2id = {name: i for i, name in id2label.items()}
     return id2label, label2id
 
-def _build_mask2former(num_classes, device, class_names=None,
-                       hf_name=None, ignore_index=255,
-                       reduce_labels=False, do_rescale=False, do_resize=False,
-                       reinit_decoder: bool = False, freeze_backbone: bool = True,
-                       **_):
-    name = hf_name or "facebook/mask2former-swin-small-ade-semantic"
-    processor = AutoImageProcessor.from_pretrained(
-        name, reduce_labels=reduce_labels, do_rescale=do_rescale, do_resize=do_resize
-    )
+def _build_mask2former(
+    num_classes,
+    device,
+    class_names=None,
+    hf_name=None,
+    ignore_index=255,
+    reinit_decoder: bool = False,
+    freeze_backbone: bool = True,
+    **_,
+):
+    model_ckpt = hf_name or "facebook/mask2former-swin-base-ade-semantic"
+    processor_ckpt = "facebook/mask2former-swin-small-ade-semantic"
+
+    processor = AutoImageProcessor.from_pretrained(processor_ckpt)
+
     if class_names is None:
         class_names = [f"Class_{i}" for i in range(num_classes)]
-    id2label = {i: c for i, c in enumerate(class_names)}
+
+    id2label = {i: name for i, name in enumerate(class_names)}
+    label2id = {name: i for i, name in id2label.items()}
+
     model = Mask2FormerForUniversalSegmentation.from_pretrained(
-        name,
+        model_ckpt,
         num_labels=num_classes,
         id2label=id2label,
-        label2id={v: k for k, v in id2label.items()},
+        label2id=label2id,
         ignore_mismatched_sizes=True,
     )
+
     model.config.ignore_index = ignore_index
+    model.config.semantic_loss_ignore_index = ignore_index
 
     if freeze_backbone:
         freeze_backbone_stages(model)
-        logger.success("Mask2Former Swin patch_embed + stages (0,1) frozen.")
+        logger.success("Mask2Former backbone stages (0,1) frozen.")
+
     if reinit_decoder:
         reinit_decoder(model)
-        logger.success("Mask2Former pixel decoder re-initialized.")
+        logger.success("Mask2Former decoder re-initialized.")
 
     return model.to(device), processor
 
